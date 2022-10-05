@@ -1,0 +1,117 @@
+  
+/************************color variants get code**********************/
+
+
+{%- if section.settings.enable_color_add != blank -%}
+          <div class="add-color-option">
+            {% assign keys = "Color,color,Colour,colour" | split: ',' %}
+            {% for key in keys %}
+            {% if card_product.options contains key %}
+            <div class="product_tile_color_holder">
+              {% for color_option in card_product.options_by_name[key].values %}
+              {% for variant in card_product.variants  %}
+
+              {% if variant.options contains color_option %}
+              {% if variant.image %}
+
+              {% assign background_style = color_option %}
+              {% endif %}
+              {% if variant.metafields.color.swatch %}
+              {% assign background_style = variant.metafields.color.swatch %}
+              {% endif %}
+              {% if variant.metafields.image.swatch %}
+              {% assign background_style = "url(" | append: variant.metafields.image.swatch | append: ")" %}
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+              <!--- Coded  --->
+              <input
+                     type="radio" {% for variant in card_product.variants  %} {% if variant.options contains color_option %}
+                     {% if variant.image %}
+                     data-img=" {{ variant.image | img_url : "original"}}" style="background-image: url('{{ variant.image | img_url }}');"
+                     {% endif %} {% endif %}{% endfor %}
+                     name="{{ card_product.id }}_card_color"
+                     id="{{ card_product.id }}color{{ forloop.index }}"
+                     style="background: {{ color_option }}; background-size: cover;">
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+
+
+
+
+
+/************************card-media*******************************/
+
+  {%- if card_product.featured_media -%}
+      <div class="card__media">
+        <div class="media media--transparent media--hover-effect">
+          {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+          <a href="{{ card_product.url }}">  <img class="mian_image"
+                                                                              srcset="{%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 720 -%}{{ card_product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 940 -%}{{ card_product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+            {%- if card_product.featured_media.width >= 1066 -%}{{ card_product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+            {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w"
+                                                                              src="{{ card_product.featured_media | image_url: width: 533 }}"
+                                                                              sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                                                                              alt="{{ card_product.featured_media.alt | escape }}"
+                                                                              class="motion-reduce"
+                                                                              {% unless lazy_load == false %}loading="lazy"{% endunless %}
+                                                                              width="{{ card_product.featured_media.width }}"
+                                                                              height="{{ card_product.featured_media.height }}"
+                                                                              ></a>
+          {% comment %}theme-check-enable ImgLazyLoading{% endcomment %}
+
+          {%- if card_product.media[1] != nil and show_secondary_image -%}
+          <a href="{{ card_product.url }}" class="full-unstyled-link">   <img
+                                                                              srcset="{%- if card_product.media[1].width >= 165 -%}{{ card_product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if card_product.media[1].width >= 360 -%}{{ card_product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if card_product.media[1].width >= 533 -%}{{ card_product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}
+            {%- if card_product.media[1].width >= 720 -%}{{ card_product.media[1] | image_url: width: 720 }} 720w,{%- endif -%}
+            {%- if card_product.media[1].width >= 940 -%}{{ card_product.media[1] | image_url: width: 940 }} 940w,{%- endif -%}
+            {%- if card_product.media[1].width >= 1066 -%}{{ card_product.media[1] | image_url: width: 1066 }} 1066w,{%- endif -%}
+            {{ card_product.media[1] | image_url }} {{ card_product.media[1].width }}w"
+                                                                              src="{{ card_product.media[1] | image_url: width: 533 }}"
+                                                                              sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                                                                              alt="{{ card_product.media[1].alt | escape }}"
+                                                                              class="motion-reduce"
+                                                                              loading="lazy"
+                                                                              width="{{ card_product.media[1].width }}"
+                                                                              height="{{ card_product.media[1].height }}"
+                                                                              ></a>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- endif -%}
+	  
+	  
+	  
+	  /***************************juery*****************************888/
+	  
+	   / Custom-Color-Swatch /
+$(document).ready(function() {
+    $(".on_color_click").click(function() {
+        var selected_value = $(this).attr("data-value");
+
+        $(".chnagevalue_Color option").each(function() {
+            var option_value = $(this).attr("data-value");
+            //console.log('option_value', option_value);
+            //console.log('selected_value', selected_value);
+            if (option_value.includes(selected_value)) {
+                $(this).attr("selected", "selected");
+                //console.log('yes');
+
+            } else {
+                //console.log('no');
+                $(this).removeAttr("selected");
+            }
+        });
+
+
+    });
